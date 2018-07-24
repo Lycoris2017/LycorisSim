@@ -1,0 +1,28 @@
+
+How to setup the package
+
+In bash shell do:
+
+source setupILCsoft.sh
+source geant4init.sh
+
+
+To compile, do: 
+
+make
+
+
+To run (without graphics) do:
+
+./bin/Linux-g++/tpcsim Beam_source.mac
+
+-->This will give a roon output.
+To analyse that file, run one of the .C macros.
+
+
+## More info:
+Different .mac files present for different kinds of beams.
+
+Model code is available is src directory
+eg definition of silicon layers in DetectorConstruction.cc
+

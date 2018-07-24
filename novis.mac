@@ -1,0 +1,6 @@
+### Sets some default verbose
+/control/verbose 0
+/run/verbose 1
+
+/run/beamOn 1000
+

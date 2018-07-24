@@ -1,0 +1,29 @@
+### Sets some default verbose
+/control/verbose 0
+/run/verbose 1
+
+# this is a mono energetic electron beam
+/gps/particle e-
+/gps/ene/type Mono
+
+# the incident surface is in the y-z plane
+/gps/pos/rot1 0 1 0
+/gps/pos/rot2 0 0 1
+
+# the beam energy is in mono energetic at 5000 MeV and
+# the beam spot is point like and centered at x = 2 m
+/gps/ene/mono 5000. MeV
+/gps/pos/type Point
+/gps/pos/centre 200. 0. 0. cm
+
+# the beam doesn't has no dispersion
+/gps/ang/type focused
+
+# set the beam momentum towards the negative x axis
+/gps/direction -1. 0. 0.
+
+# just a dummy run 
+#/run/beamOn 1
+
+# run the simulation ... times
+/run/beamOn 100000

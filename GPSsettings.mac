@@ -1,0 +1,15 @@
+### Sets some default verbose
+/control/verbose 0
+/run/verbose 1
+/gps/particle e-
+/gps/ene/type Mono
+/gps/ene/mono 5000. MeV
+/gps/pos/type Point
+/gps/pos/centre 200. 0. 0. cm
+/gps/pos/rot1 0. 1. 0.
+/gps/pos/rot2 0. 0. 1.
+/gps/ang/type focused
+/gps/direction -1. 0. 0.
+
+
+/run/beamOn 10000

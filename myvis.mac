@@ -1,0 +1,56 @@
+#/vis/open OGLIX
+#/vis/drawVolume
+#/vis/viewer/set/viewpointThetaPhi 125. 330.
+#/vis/scene/add/axes 0 0 0 1 cm
+#/vis/viewer/flush
+#/run/beamOn 1
+/control/verbose 2
+/run/verbose 2
+/gps/particle e-
+#/vis/open HepRepFile
+#/vis/drawVolume
+#/vis/viewer/set/viewpointThetaPhi 125. 330.
+#/vis/scene/add/axes 0 0 0 1 cm
+#/vis/scene/add/trajectories
+#/vis/scene/add/hits
+#/run/beamOn 1
+#/vis/viewer/flush
+#/run/beamOn 1
+
+# To draw only electrons from now on:
+#/vis/filtering/trajectories/create/particleFilter
+#/vis/filtering/trajectories/particleFilter-0/add e-
+
+/vis/open OGLIQt 600x600-0+0
+#/vis/ogl/set/printMode vectored
+/vis/drawVolume
+#/vis/drawVolume stick_phys
+/vis/scene/add/axes 0 0 0 1 cm
+/vis/scene/add/trajectories
+/vis/scene/add/hits
+/vis/scene/endOfEventAction accumulate
+#/run/beamOn 10
+
+#x-y view
+#/vis/viewer/set/viewpointThetaPhi 0. 0
+#/vis/viewer/flush
+#/run/beamOn 1
+#/vis/ogl/printEPS
+#x-z view
+#/vis/viewer/set/viewpointThetaPhi -90. -89.
+#/vis/viewer/flush
+#/run/beamOn 1
+#/vis/ogl/printEPS
+#y-z view
+#/vis/viewer/set/viewpointThetaPhi 90. 180
+#/vis/viewer/flush
+#/run/beamOn 1
+#/vis/ogl/printEPS
+#general view
+#/vis/viewer/set/viewpointThetaPhi 125. 330.
+#/vis/viewer/flush
+#/run/beamOn 1
+#/vis/ogl/printEPS
+
+
+
