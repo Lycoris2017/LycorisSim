@@ -1,0 +1,62 @@
+
+2019-01-24 Created
+author@ M.Wu
+origin@ Dimitra
+
+Modification:
+* 2019-04-11 @M. Wu
+
+target
+1. upgrade the G4 to the latest 10th generation
+2. learn better the whole standalone G4 geo Dimitra made by reproducing result.
+3. produce at most 1000 events in a dat format that Claus can work out a python lycoris processor.
+
+Nomeclature:
+* everything with "old_" is code from Dimitra, and new version modified by M. Wu;
+
+----- Visualization:
+$ bin/Linux-g++/tpcsim myvis.mac
+$ bin/Linux-g++/tpcsim
+
+----- How to setup:
+$ source setup_code.sh
+
+----- How to compile:
+$ mkdir build/
+$ cd build/
+$ cmake ..
+$ make install -j8
+
+----- How to run:
+$ ./bin/tpcsim Beam_source.mac
+
+--------------------------------------------------
+----------- Instructions from Dimitra: -----------
+--------------------------------------------------
+How to setup the package
+
+In bash shell do:
+
+source setupILCsoft.sh
+source geant4init.sh
+
+
+To compile, do: 
+
+make
+
+
+To run (without graphics) do:
+
+./bin/Linux-g++/tpcsim Beam_source.mac
+
+-->This will give a roon output.
+To analyse that file, run one of the .C macros.
+
+
+## More info:
+Different .mac files present for different kinds of beams.
+
+Model code is available is src directory
+eg definition of silicon layers in DetectorConstruction.cc
+

@@ -1,0 +1,124 @@
+// $Id: DetectorConstruction.hh 33 2010-01-14 17:08:18Z adotti $
+#ifndef DetectorConstruction_h
+#define DetectorConstruction_h 1
+
+/**
+ * @file
+ * @brief Defines mandatory user class DetectorConstruction.
+ */
+
+#include "globals.hh"
+#include "G4VUserDetectorConstruction.hh"
+#include "G4ThreeVector.hh"
+#include "G4StepLimiter.hh"
+
+
+class G4LogicalVolume;
+class G4VPhysicalVolume;
+class G4Material;
+class G4UserLimits;
+//class DetectorMessenger;
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+/*!
+\brief This mandatory user class defines the geometry.
+
+It is responsible for
+ - Definition of material, and
+ - Construction of geometry
+
+\sa Construct()
+ */
+class DetectorConstruction : public G4VUserDetectorConstruction
+{
+public:
+  //! Constructor
+  DetectorConstruction();
+  //! Destructor
+  ~DetectorConstruction();
+public:
+  //! Construct geometry of the setup
+  G4VPhysicalVolume* Construct();
+
+private:
+  //! define needed materials
+  void DefineMaterials();
+  //! initialize geometry parameters
+  void ComputeParameters();
+  //! Construct geometry
+  G4VPhysicalVolume* ConstructGeometry();
+  void ConstructField();
+private:
+
+  //! \name Materials
+  //@{
+  G4Material* air;
+  G4Material* vacuum;
+  G4Material* steel;
+  G4Material* kapton;
+  G4Material* cu;
+  G4Material* ar;
+  G4Material* si;
+  //@}
+
+  //! \name global mother volume
+  //@{
+  G4LogicalVolume * logicWorld;
+  G4double halfWorldLength;
+  //@}
+
+  //! \name Parameters for LP
+  //@{
+  G4int noOfFieldStrips;
+  G4double halfFieldStripWidth;
+  G4double halfFieldStripsLength;
+  G4double siSensorThickness;
+  G4double innerKaptonRadius;
+  G4double outerKaptonRadius;
+  G4double gasRadius;
+  G4double innerInnerFieldStripsRadius;
+  G4double outerInnerFieldStripsRadius;
+  G4double innerOuterFieldStripsRadius;
+  G4double outerOuterFieldStripsRadius;
+  G4double electrodeRadius;
+  G4double halfLPLength;
+  G4VPhysicalVolume* kaptonPart;
+  G4VPhysicalVolume* magnetPart;
+  G4VPhysicalVolume* tpcGasPart;
+  G4VPhysicalVolume* anodePart;
+  G4VPhysicalVolume* cathodePart;
+  G4VPhysicalVolume* airInMagnetPart;
+  G4VPhysicalVolume* firstSiSensorPart;
+  G4VPhysicalVolume* secondSiSensorPart;
+  G4VPhysicalVolume* thirdSiSensorPart;
+  G4VPhysicalVolume* fourthSiSensorPart;
+
+
+
+  //@}
+  G4LogicalVolume* kaptonLogic;
+  G4LogicalVolume* magnetLogic;
+  G4LogicalVolume* tpcGasLogic;
+  G4LogicalVolume* anodeLogic;
+  G4LogicalVolume* cathodeLogic;
+  G4LogicalVolume* innerFieldStripsLogic;
+  G4LogicalVolume* outerFieldStripsLogic;
+  G4LogicalVolume* airInMagnetLogic;
+  G4LogicalVolume* firstSiSensorLogic;
+  G4LogicalVolume* secondSiSensorLogic;
+  G4LogicalVolume* thirdSiSensorLogic;
+  G4LogicalVolume* fourthSiSensorLogic;
+
+
+
+  //! \name Parameters for Magnet
+  //@{
+  G4double innerMagnetRadius;
+  G4double outerMagnetRadius;
+  //@}
+  G4UserLimits* stepLimit;             // pointer to user step limits
+};
+
+
+#endif
