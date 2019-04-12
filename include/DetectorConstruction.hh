@@ -81,20 +81,6 @@ private:
 	G4double halfWorldLength;
 	//@}
 	
-
-	bool Layers;
-	bool NNlayers;
-	bool Nlayers;
-	
-	G4double moveInnerSiLayerBack;
-	G4double moveOuterSiLayerBack;
-	G4double overlapdistanceBack;
-	
-	G4int noOfFieldStrips;
-	G4double halfFieldStripWidth;
-	G4double halfFieldStripsLength;
-	G4double overlapdistance;
-
 	G4double mSiSensorThickness;
 	G4double mSiSensorYZ;
 	G4int    mNumOfLayers;
@@ -106,19 +92,8 @@ private:
 	G4double mCassetteZ;
 	//@}
 
-	G4double minimumForTest;
-	G4double moveInnerSiLayer;
-	G4double moveOuterSiLayer;
 	G4double makeVisibleGraphics;
 	G4double ExtraFirstPosition;
-	G4double innerKaptonRadius;
-	G4double outerKaptonRadius;
-	G4double gasRadius;
-	G4double innerInnerFieldStripsRadius;
-	G4double outerInnerFieldStripsRadius;
-	G4double innerOuterFieldStripsRadius;
-	G4double outerOuterFieldStripsRadius;
-	G4double electrodeRadius;
 	G4double halfLPLength;
 
 	//! \name Physical Volume Pointer
@@ -126,23 +101,6 @@ private:
 	G4VPhysicalVolume* pMagnetPhysi;
 	G4VPhysicalVolume* pAirInMagnetPhysi;
 	G4VPhysicalVolume* pCassettePhysi;
-	/*	G4VPhysicalVolume* kaptonPart;
-		G4VPhysicalVolume* tpcGasPart;
-		G4VPhysicalVolume* anodePart;
-		G4VPhysicalVolume* cathodePart;*/
-	/*
-	G4VPhysicalVolume* firstSiSensorPart;
-	G4VPhysicalVolume* secondSiSensorPart;
-	G4VPhysicalVolume* thirdSiSensorPart;
-	G4VPhysicalVolume* fourthSiSensorPart;
-	G4VPhysicalVolume* firstExtraSiSensorPart;
-	G4VPhysicalVolume* fourthExtraSiSensorPart;
-	G4VPhysicalVolume* firstExtraNSiSensorPart;
-	G4VPhysicalVolume* fourthExtraNSiSensorPart;
-	G4VPhysicalVolume* firstExtraNNSiSensorPart;
-	G4VPhysicalVolume* fourthExtraNNSiSensorPart;
-	*/
-	
 	//@}
 
 	//! \name Logic Volume Pointers
@@ -151,19 +109,6 @@ private:
 	G4LogicalVolume* pAirInMagnetLogic;
 	G4LogicalVolume* pCassetteLogic;
 	G4LogicalVolume* pSensorLogic;
-	/*
-	G4LogicalVolume* firstSiSensorLogic;
-	G4LogicalVolume* secondSiSensorLogic;
-	G4LogicalVolume* thirdSiSensorLogic;
-	G4LogicalVolume* fourthSiSensorLogic;
-	
-	G4LogicalVolume* firstExtraSiSensorLogic;
-	G4LogicalVolume* fourthExtraSiSensorLogic;
-	G4LogicalVolume* firstExtraNSiSensorLogic;
-	G4LogicalVolume* fourthExtraNSiSensorLogic;
-	G4LogicalVolume* firstExtraNNSiSensorLogic;
-	G4LogicalVolume* fourthExtraNNSiSensorLogic;
-	*/
 	//@}
 	
 	//! \name Parameters for Magnet

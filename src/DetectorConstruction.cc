@@ -81,11 +81,10 @@ void DetectorConstruction::DefineMaterials()
 	vacuum  = man->FindOrBuildMaterial("G4_Galactic");
 
 	//Tracker
-	air     = man->FindOrBuildMaterial("G4_AIR");
+	air= man->FindOrBuildMaterial("G4_AIR");
 	ar = man->FindOrBuildMaterial("G4_Ar");
 	cu = man->FindOrBuildMaterial("G4_Cu");
-	steel = man->FindOrBuildMaterial("G4_STAINLESS-STEEL");
-	kapton = man->FindOrBuildMaterial("G4_KAPTON");
+	//kapton = man->FindOrBuildMaterial("G4_KAPTON");
 	si = man->FindOrBuildMaterial("G4_Si");
 }
 
@@ -96,38 +95,9 @@ void DetectorConstruction::ComputeParameters(){
 	 */
 	// ** world **
 	halfWorldLength = 5.3* m;
-	halfFieldStripsLength = 305*mm;
-	innerKaptonRadius = 382.5*mm;
-	outerKaptonRadius = (innerKaptonRadius+0.011*kapton->GetRadlen());
-	innerInnerFieldStripsRadius = 382.55*mm;
-	outerInnerFieldStripsRadius = 382.65*mm;
-	innerOuterFieldStripsRadius = 382.75*mm;
-	outerOuterFieldStripsRadius = 382.85*mm;
 	halfLPLength = 305*mm;
-	
-	gasRadius=innerKaptonRadius;
-	noOfFieldStrips=210;  //number of field strips per layer //default:210
-	halfFieldStripWidth=1.15*mm;
-	electrodeRadius = 379.5*mm;
-	overlapdistance = 0.*mm; //0.001*mm;
-	//	mSiSensorThickness= 0.25*mm;  // original
-	//	mSiSensorThickness= 0.100*mm;
-	//  mSiSensorThickness= 0.3*mm;
-	minimumForTest=0.025*mm;
-	moveInnerSiLayer= 2.1*mm;//0.1*mm;
-	moveOuterSiLayer= 6.9*mm;//15*mm;
 
-	moveInnerSiLayerBack= 2.1*mm;//0.1*mm;
-	moveOuterSiLayerBack= 6.9*mm;//15*mm;
-	//	overlapdistanceBack = 28.*mm; //0.001*mm;
-	overlapdistanceBack = 2.*mm; //0.001*mm;
-
-	//	ExtraFirstPosition = (mInnerMagnetRadius - outerKaptonRadius - moveInnerSiLayer - moveOuterSiLayer)/4.; // for 3 additional layers (ie 2+3=5)
-	//	ExtraFirstPosition = (mInnerMagnetRadius - outerKaptonRadius - moveInnerSiLayer - moveOuterSiLayer)/3.; // for 2 additional layers
-	ExtraFirstPosition = (mInnerMagnetRadius - outerKaptonRadius - moveInnerSiLayer - moveOuterSiLayer)/2.; // for 1 additional layer
-	Layers=false; // change also flag in Analysis.cc
-	Nlayers=false; // change also flag in Analysis.cc
-	NNlayers=false; // change also flag in Analysis.cc
+	//minimumForTest=0.025*mm;
 	
 }
 
