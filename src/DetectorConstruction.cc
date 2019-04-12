@@ -6,6 +6,8 @@
  * Origin @Dimitra
  * Modify @Mengqing, 2019-01-28
  * Dev    @Mengqing, 2019-04-11
+ * Note by Mengqing: 
+ * -- Magnetic field is hard coded in it, but one can set it to 0 tesla.
  */
 
 #include "DetectorConstruction.hh"
@@ -41,8 +43,12 @@
 DetectorConstruction::DetectorConstruction()
 {
 	mNumOfLayers = 6;
-	mTRKSiliconXY = 92*mm;
+	mSiSensorYZ = 92*mm;
 	mSiSensorThickness = 0.320*mm;
+
+	mCassetteX=33*mm;
+	mCassetteY=121*mm;
+	mCassetteZ=321*mm;
 
 	mInnerMagnetRadius = 425*mm;
 	mOuterMagnetRadius = (425*mm+0.2*cu->GetRadlen()); // magnet wall is 20% X0 in copper thick
@@ -134,7 +140,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct(){
 	
 	/*--------- Material definition ---------*/
     DefineMaterials();
-
     /*--------- Volumes definition ---------*/
     return DefineVolumes();
 	
@@ -150,110 +155,81 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes(){
 	 * Version 2:
 	 *   World Box <- Magnet World <- upstream Box + downstream Box
 	 */
+
+	/* copy numbers (unique index)
+	 * 0: world with air
+	 * 1: air in magnet
+	 * 3: magnet solid
+	 * 4: tpc gas
+	 * 5: anode
+	 * 6: cathode
+	 * 7: first si-Sensor
+	 * 8: second si-Sensor
+	 * 9: third si-Sensor
+	 * 10: fourth si-Sensor
+	 * 11+: field strips of the field cage
+	 */
 	
 	/*--------- World Box ---------*/
 	G4Box * solidWorld= new G4Box("world", halfWorldLength, halfWorldLength, halfWorldLength);
 	// World Logical Volume (Associate with the world box)
-	flogicWorld= new G4LogicalVolume( solidWorld, air, "World", 0, 0, 0);
+	pLogicWorld= new G4LogicalVolume( solidWorld, air, "World", 0, 0, 0);
 	// Placement of the World Logical Volume
-	fphysiWorld = new G4PVPlacement(0,                // no rotation
+	pPhysiWorld = new G4PVPlacement(0,                // no rotation
 	                                G4ThreeVector(),  // at (0,0,0)
-	                                flogicWorld,    // its logical volume
+	                                pLogicWorld,      // its logical volume
 	                                "World",          // its name
 	                                0,                // its mother volume 
-	                                false,			  // no boolean operations
-	                                0, 				  // copy number
-	                                fCheckOverlaps);  // flag on/off check overlaps
+	                                false,			  // pMany, not used, Set it to false...
+	                                0, 				  // copy number, unique arbitrary index
+	                                fCheckOverlaps);  // optional overlap check
 
-	/*--------- Upstream Box ---------*/
-	// creating 1st layer of silicon sensor
-	G4Tubs* firstSiSensorSolid= new G4Tubs( "FirstSiSensorSolid",//its name
-	                                        mInnerMagnetRadius-overlapdistance-mSiSensorThickness-moveOuterSiLayer, //inner radius
-	                                        mInnerMagnetRadius-overlapdistance-moveOuterSiLayer,//outer radius
-	                                        halfLPLength, //half length in z: number of layers
-	                                        0*deg, //Starting angle in phi
-	                                        90*deg);//Ending angle in phi, pi defined in
-	
-	firstSiSensorLogic = new G4LogicalVolume( firstSiSensorSolid,//its solid
-	                                          si,//its material
-	                                          "FirstSiSensorLogic");//its name
-	
-	G4RotationMatrix * rot1  = new G4RotationMatrix();
-	rot1->rotateZ(45*deg); // very large degree!
-	firstSiSensorPart = new G4PVPlacement( rot1, //no rotation
-	                                       G4ThreeVector(), //translation
-	                                       firstSiSensorLogic,//its logical volume
-	                                       "FirstSiSensorPart",//its name
-	                                       airInMagnetLogic,//its mother volume
-	                                       false,
-	                                       7, fCheckOverlaps);//copy number
+	/*--------- Magnet : 1st daughter of mother World  ---------*/
+	G4Tubs* magnetSolid = new G4Tubs( "MagnetSolid",      //its name
+	                                  mInnerMagnetRadius, //inner radius
+	                                  mOuterMagnetRadius, //outer radius
+	                                  halfLPLength,      //half length in z: number of layers
+	                                  0,                 //Starting angle in phi
+	                                  CLHEP::twopi);     //Ending angle in phi, pi defined in
 
-	// creating 2nd layer of silicon sensor
-	G4Tubs* secondSiSensorSolid= new G4Tubs( "SecondSiSensorSolid",//its name
-	                                         outerKaptonRadius+moveInnerSiLayer, //inner radius
-	                                         outerKaptonRadius+mSiSensorThickness+moveInnerSiLayer,//outer radius
-	                                         halfLPLength, //half length in z: number of layers
-	                                         0*deg, //Starting angle in phi
-	                                         90*deg);//Ending angle in phi, pi defined in
+	pMagnetLogic = new G4LogicalVolume( magnetSolid, cu, "MagnetLogic");//its name
+	pMagnetPhysi= new G4PVPlacement( 0, G4ThreeVector(), pMagnetLogic, "MagnetPart",
+	                                pLogicWorld, false, 1, fCheckOverlaps);
+
+	//create a cylinder magnetic field region
+	G4Tubs* airInMagnetSolid= new G4Tubs( "AirInMagnetSolid",// name
+	                                      0,                 // inner radius
+	                                      mInnerMagnetRadius,// outer radius
+	                                      halfLPLength,      // half height (z axis)
+	                                      0,                 // Starting angle in phi
+	                                      CLHEP::twopi);     // Ending angle in phi, pi defined in
 	
-	secondSiSensorLogic = new G4LogicalVolume( secondSiSensorSolid,//its solid
-	                                           si,//its material
-	                                           "SecondSiSensorLogic");//its name
+	pAirInMagnetLogic = new G4LogicalVolume( airInMagnetSolid, air, "AirInMagnetLogic");
 	
-	secondSiSensorPart = new G4PVPlacement( rot1, //no rotation
-	                                        G4ThreeVector(), //translation
-	                                        secondSiSensorLogic,//its logical volume
-	                                        "SecondSiSensorPart",//its name
-	                                        airInMagnetLogic,//its mother volume
-	                                        false,
-	                                        8, fCheckOverlaps);//copy number
+	pAirInMagnetPhysi = new G4PVPlacement(0, G4ThreeVector(), pAirInMagnetLogic,"AirInMagnetPart",
+	                                      pLogicWorld,  false, 2, fCheckOverlaps);
 	
+	/*--------- Upstream Cassette : daughter of AirInMagnetLogic ---------*/
+	
+	auto CassetteSolid = new G4Box("Cassette Solid", mCassetteX/2, mCassetteY/2, mCassetteZ/2); //half-length
+	pCassetteLogic = new G4LogicalVolume( CassetteSolid, air, "Cassette Logic");
+	pCassettePhysi = new G4PVPlacement( 0, G4ThreeVector(), pCassetteLogic, "Cassette Physical",
+	                                    pAirInMagnetLogic,  false, 3, fCheckOverlaps);
+	
+
+	// Create sensor layers
+	auto SensorSolid = new G4Box("Sensor solid", mSiSensorThickness/2, mSiSensorYZ/2, mSiSensorYZ/2 );
+	pSensorLogic = new G4LogicalVolume( SensorSolid, si, "Cassette Logic");
+	// TODO: orientation and placement!
+
 	/*--------- Downstream Box ---------*/
-	// creating 3rd layer of silicon sensor
-	G4Tubs* thirdSiSensorSolid= new G4Tubs( "ThirdSiSensorSolid",//its name
-	                                        outerKaptonRadius+moveInnerSiLayerBack, //inner radius
-	                                        outerKaptonRadius+mSiSensorThickness+moveInnerSiLayerBack,//outer radius
-	                                        halfLPLength, //half length in z: number of layers
-	                                        0*deg, //Starting angle in phi
-	                                        90*deg);//Ending angle in phi, pi defined in
-	
-	thirdSiSensorLogic = new G4LogicalVolume( thirdSiSensorSolid,//its solid
-	                                          si,//its material
-	                                          "ThirdSiSensorLogic");//its name
-	G4RotationMatrix * rot2  = new G4RotationMatrix();
-	rot2->rotateZ(225*deg);
-	thirdSiSensorPart = new G4PVPlacement( rot2, //no rotation
-	                                       G4ThreeVector(), //translation
-	                                       thirdSiSensorLogic,//its logical volume
-	                                       "ThirdSiSensorPart",//its name
-	                                       airInMagnetLogic,//its mother volume
-	                                       false,
-	                                       9, fCheckOverlaps);//copy number
-	
-	// creating 4th layer of silicon sensor
-	G4Tubs* fourthSiSensorSolid= new G4Tubs( "FourthSiSensorSolid",//its name
-	                                         mInnerMagnetRadius-overlapdistanceBack-mSiSensorThickness-moveOuterSiLayerBack, //inner radius
-	                                         mInnerMagnetRadius-overlapdistanceBack-moveOuterSiLayerBack,//outer radius
-	                                         halfLPLength, //half length in z: number of layers
-	                                         0*deg, //Starting angle in phi
-	                                         90*deg);//Ending angle in phi, pi defined in
-	
-	fourthSiSensorLogic = new G4LogicalVolume( fourthSiSensorSolid,//its solid
-	                                           si,//its material
-	                                           "FourthSiSensorLogic");//its name
-	
-	fourthSiSensorPart = new G4PVPlacement(rot2, //no rotation
-	                                       G4ThreeVector(), //translation
-	                                       fourthSiSensorLogic,//its logical volume
-	                                       "FourthSiSensorPart",//its name
-	                                       airInMagnetLogic,//its mother volume
-	                                       false,
-	                                       10, fCheckOverlaps);//copy number
-	
 
 
-	//-- For visulization:
-	
+
+	//** Construct an uniform local B field
+	ConstructField();
+
+	//** Visualization attributes
 	G4Color
 		green(0.0,1.0,0.0),
 		red(1.0,0.0,0.0),
@@ -261,12 +237,20 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes(){
 		brown(0.4,0.4,0.1),
 		white(1.0,1.0,1.0);
 
-	/*
+	pLogicWorld -> SetVisAttributes(G4VisAttributes::Invisible);
+	auto MagnetVisAtt = new G4VisAttributes(blue);
+	auto CassetteVisAtt = new G4VisAttributes(white);
+	auto SensorVisAtt = new G4VisAttributes(red);
+
+	pMagnetLogic  -> SetVisAttributes(MagnetVisAtt);
+	pCassetteLogic-> SetVisAttributes(CassetteVisAtt);
+	pSensorLogic  -> SetVisAttributes(SensorVisAtt); 
+	
 	std::cout<<"test"<<std::endl;
-	ConstructGeometry();
-	ConstructField();
-	*/
-	return fphysiWorld;
+	PrintParameters();
+	
+	//always return the physical World
+	return pPhysiWorld;
 
 }
 
@@ -274,6 +258,7 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes(){
 void DetectorConstruction::ConstructField() {
 	/* 
 	 * 1 Tesla B field.
+	 * using an uniform LOCAL B field to represent the inner-solenoid. 
 	 */
 	static G4TransportationManager* trMgr= 
 		G4TransportationManager::GetTransportationManager();
@@ -289,94 +274,24 @@ void DetectorConstruction::ConstructField() {
 	G4MagneticField* myField;
 	G4ThreeVector  fieldVector( 0 , 0 , 1*tesla );
 	//  G4ThreeVector  fieldVector( 0 , 0 , 0 );
-	myField = new G4UniformMagField( fieldVector ); 
+
+	// create a uniform magnetic field along Z axis
+	myField = new G4UniformMagField( fieldVector );
+	// set this field as the global field
 	magnetFieldMgr->SetDetectorField(myField);
-	magnetFieldMgr->CreateChordFinder(myField);  
-	//  tpcGasLogic->SetFieldManager( magnetFieldMgr, true );
-	airInMagnetLogic->SetFieldManager( magnetFieldMgr, true );
+	// prepare the propagation with dfault parameters and other choices
+	magnetFieldMgr->CreateChordFinder(myField);
+
+	pAirInMagnetLogic->SetFieldManager( magnetFieldMgr, true );
 	
 }
  
 
 
-G4VPhysicalVolume* DetectorConstruction::ConstructGeometry()
-{
-	/*copy numbers
-	 * 0: world with air
-	 * 1: air between magnet and tpc
-	 * 2: kapton of field cage
-	 * 3: magnet solid
-	 * 4: tpc gas
-	 * 5: anode
-	 * 6: cathode
-	 * 7: first si-Sensor
-	 * 8: second si-Sensor
-	 * 9: third si-Sensor
-	 * 10: fourth si-Sensor
-	 * 11+: field strips of the field cage
-	 */
+// G4VPhysicalVolume* DetectorConstruction::ConstructGeometry()
+// {
 
-
-	//creating air in magnet
-	G4Tubs* airInMagnetSolid= new G4Tubs( "AirInMagnetSolid",//its name
-	                                      0, //inner radius
-	                                      mInnerMagnetRadius,//outer radius
-	                                      halfLPLength, //half length in z: number of layers
-	                                      0, //Starting angle in phi
-	                                      CLHEP::twopi);//Ending angle in phi, pi defined in
-	
-	airInMagnetLogic = new G4LogicalVolume( airInMagnetSolid,//its solid
-	                                        air,//its material
-	                                        "AirInMagnetLogic");//its name
-	
-	airInMagnetPart = new G4PVPlacement( 0, //no rotation
-	                                     G4ThreeVector(), //translation
-	                                     airInMagnetLogic,//its logical volume
-	                                     "AirInMagnetPart",//its name
-	                                     flogicWorld,//its mother volume
-	                                     false,
-	                                     1, fCheckOverlaps);//copy number
-	
-	//craeting Kapton layer -- TPC
-
-	//creating Magnet	
-
-	//creating drift gas  -- TPC
-	//creating anode and kathode plane -- TPC
-
-	//creating first layer of silicon sensor
-
-	// tracker box
-	auto trkBox = new G4Box("", mTRKSiliconXY/2, mTRKSiliconXY/2, mSiSensorThickness);
-	// tracker logical volume
-	mpTrkLogic = new  G4LogicalVolume( trkBox, si, "Tracker");//its name
-	// tracker physical volume
-	mpTrkPhysical = new G4PVPlacement( 0,                  //no rotation
-	                                   G4ThreeVector(),    //translation
-	                                   mpTrkLogic,         //its logical volume
-	                                   "FirstSiSensorPart",//its name
-	                                   airInMagnetLogic,   //its mother volume
-	                                   false,
-	                                   7, fCheckOverlaps); //copy number
-	
-	//creating first extra layer of silicon sensor
-	//creating first extra N layer of silicon sensor
-	//creating first extra NN layer of silicon sensor
-
-	//creating second layer of silicon sensor
-
-	//creating third layer of silicon sensor
-	//creating third extra layer of silicon sensor
-	//creating third extra layer of silicon sensor
-	//creating third extra layer of silicon sensor
-	//creating fourth layer of silicon sensor
-
-	//creating field strips -- TPC field cage copper strips
-
-    //Translation of one Layer with respect previous Layer
-
-	return airInMagnetPart;
-}
+// }
 
 void DetectorConstruction::PrintParameters()
 {

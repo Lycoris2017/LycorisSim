@@ -1,0 +1,48 @@
+## Sets some default verbose
+/control/verbose 0
+/run/verbose 1
+
+# this is a electron beam
+/gps/particle e-
+/gps/pos/type Beam
+
+# # the incident surface is in the y-z plane
+# /gps/pos/rot1 0 1 0
+# /gps/pos/rot2 0 0 1
+
+# the beam spot is centered at x = 2 m and has a shape of a circle (collimator)
+# with a diameter of 1 mm
+/gps/pos/shape Circle 
+/gps/pos/centre 200. 0. 0. cm
+#/gps/pos/radius 0.5 mm
+/gps/pos/radius 5 mm
+
+# # the beam is traveling along the X_axis with 2 mrad dispersion
+# /gps/ang/rot1 0. 0. 1.
+# /gps/ang/rot2 0. 1. 0.
+/gps/ang/type beam1d
+/gps/ang/sigma_r 2. mrad
+
+# the beam energy is in gaussian profile has a mean of 5000 MeV and a sigma of 167MeV
+/gps/ene/type Gauss
+/gps/ene/mono 5000. MeV
+/gps/ene/sigma 167. MeV
+#/gps/ene/mono 6000. MeV
+#/gps/ene/sigma 199. MeV
+#/gps/ene/mono 3000. MeV
+#/gps/ene/sigma 117. MeV
+# my stuff. random sigma
+#/gps/ene/mono 1000. MeV
+#/gps/ene/sigma 50. MeV
+#/gps/ene/mono 2000. MeV
+#/gps/ene/sigma 80. MeV
+#/gps/ene/mono 4000. MeV
+#/gps/ene/sigma 142. MeV
+
+
+# set the beam momentum towards the negative x axis
+/gps/direction -1. 0. 0.
+
+# run the simulation ... times
+#/run/beamOn 100000
+/run/beamOn 10

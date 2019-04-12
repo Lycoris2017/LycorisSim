@@ -54,7 +54,7 @@ private:
 	//! initialize geometry parameters
 	void ComputeParameters();
 	//! Construct geometry
-	G4VPhysicalVolume* ConstructGeometry();
+	//G4VPhysicalVolume* ConstructGeometry();
 	G4VPhysicalVolume* DefineVolumes();
 	
 	void ConstructField();
@@ -76,13 +76,12 @@ private:
 	
 	//! \name global mother volume
 	//@{
-	G4LogicalVolume * flogicWorld;
-	G4VPhysicalVolume * fphysiWorld;
+	G4LogicalVolume * pLogicWorld;
+	G4VPhysicalVolume * pPhysiWorld;
 	G4double halfWorldLength;
 	//@}
 	
-	//! \name Parameters for LP
-	//@{
+
 	bool Layers;
 	bool NNlayers;
 	bool Nlayers;
@@ -97,9 +96,16 @@ private:
 	G4double overlapdistance;
 
 	G4double mSiSensorThickness;
-	G4double mTRKSiliconXY;
+	G4double mSiSensorYZ;
 	G4int    mNumOfLayers;
-	
+
+	//! \dimensions of the Cassette
+	//@{
+	G4double mCassetteX;
+	G4double mCassetteY;
+	G4double mCassetteZ;
+	//@}
+
 	G4double minimumForTest;
 	G4double moveInnerSiLayer;
 	G4double moveOuterSiLayer;
@@ -114,15 +120,17 @@ private:
 	G4double outerOuterFieldStripsRadius;
 	G4double electrodeRadius;
 	G4double halfLPLength;
+
+	//! \name Physical Volume Pointer
+	//@{
+	G4VPhysicalVolume* pMagnetPhysi;
+	G4VPhysicalVolume* pAirInMagnetPhysi;
+	G4VPhysicalVolume* pCassettePhysi;
 	/*	G4VPhysicalVolume* kaptonPart;
-	G4VPhysicalVolume* magnetPart;
-	G4VPhysicalVolume* tpcGasPart;
-	G4VPhysicalVolume* anodePart;
-	G4VPhysicalVolume* cathodePart;*/
-	G4VPhysicalVolume* airInMagnetPart;
-
-	G4VPhysicalVolume* mpTrkPhysical;
-
+		G4VPhysicalVolume* tpcGasPart;
+		G4VPhysicalVolume* anodePart;
+		G4VPhysicalVolume* cathodePart;*/
+	/*
 	G4VPhysicalVolume* firstSiSensorPart;
 	G4VPhysicalVolume* secondSiSensorPart;
 	G4VPhysicalVolume* thirdSiSensorPart;
@@ -133,20 +141,17 @@ private:
 	G4VPhysicalVolume* fourthExtraNSiSensorPart;
 	G4VPhysicalVolume* firstExtraNNSiSensorPart;
 	G4VPhysicalVolume* fourthExtraNNSiSensorPart;
-	
+	*/
 	
 	//@}
-	G4LogicalVolume* kaptonLogic;
-	G4LogicalVolume* magnetLogic;
-	G4LogicalVolume* tpcGasLogic;
-	G4LogicalVolume* anodeLogic;
-	G4LogicalVolume* cathodeLogic;
-	G4LogicalVolume* innerFieldStripsLogic;
-	G4LogicalVolume* outerFieldStripsLogic;
-	G4LogicalVolume* airInMagnetLogic;
 
-	G4LogicalVolume* mpTrkLogic;
-	
+	//! \name Logic Volume Pointers
+	//@{
+	G4LogicalVolume* pMagnetLogic;
+	G4LogicalVolume* pAirInMagnetLogic;
+	G4LogicalVolume* pCassetteLogic;
+	G4LogicalVolume* pSensorLogic;
+	/*
 	G4LogicalVolume* firstSiSensorLogic;
 	G4LogicalVolume* secondSiSensorLogic;
 	G4LogicalVolume* thirdSiSensorLogic;
@@ -158,8 +163,8 @@ private:
 	G4LogicalVolume* fourthExtraNSiSensorLogic;
 	G4LogicalVolume* firstExtraNNSiSensorLogic;
 	G4LogicalVolume* fourthExtraNNSiSensorLogic;
-	
-	
+	*/
+	//@}
 	
 	//! \name Parameters for Magnet
 	//@{
