@@ -6,7 +6,7 @@ origin@ Dimitra
 Modification:
 * 2019-04-11 @M. Wu
 
-target
+Target:
 1. upgrade the G4 to the latest 10th generation
 2. learn better the whole standalone G4 geo Dimitra made by reproducing result.
 3. produce at most 1000 events in a dat format that Claus can work out a python lycoris processor.
@@ -15,8 +15,13 @@ Nomeclature:
 * everything with "old_" is code from Dimitra, and new version modified by M. Wu;
 
 ----- Visualization:
-$ bin/Linux-g++/tpcsim myvis.mac
-$ bin/Linux-g++/tpcsim
+* Usually you should do:
+$ bin/tpcsim myvis.mac
+
+* But it seems this will work:
+$ bin/tpcsim
+
+Then you open the vis.mac file with the gui, you will be able to see the geometry display.
 
 ----- How to setup:
 $ source setup_code.sh
@@ -24,6 +29,7 @@ $ source setup_code.sh
 ----- How to compile:
 $ mkdir build/
 $ cd build/
+#$ cmake -C /cvmfs/ilc.desy.de/sw/x86_64_gcc49_sl6/v02-00-01/ILCSoft.cmake ..
 $ cmake ..
 $ make install -j8
 

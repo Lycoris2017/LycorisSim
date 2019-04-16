@@ -42,25 +42,26 @@
 
 DetectorConstruction::DetectorConstruction()
 {
-	mNumOfLayers = 6;
-	mSiSensorYZ = 92*mm;
-	mSiSensorThickness = 0.320*mm;
-
-	mCassetteX=33*mm;
-	mCassetteY=121*mm;
-	mCassetteZ=321*mm;
-
-	mInnerMagnetRadius = 425*mm;
-	mOuterMagnetRadius = (425*mm+0.2*cu->GetRadlen()); // magnet wall is 20% X0 in copper thick
-
-	//--------- Material definition ---------
-	DefineMaterials(); // mengqing
-
-	//--------- Sizes of the principal geometrical components (solids)  ---------
-	ComputeParameters(); 
-
-	//--------- Extra: Mengqing  ---------
-	fCheckOverlaps=true;
+  //--------- Material definition ---------
+  DefineMaterials(); // mengqing
+  
+  mNumOfLayers = 6;
+  mSiSensorYZ = 92*mm;
+  mSiSensorThickness = 0.320*mm;
+  
+  mCassetteX=33*mm;
+  mCassetteY=121*mm;
+  mCassetteZ=321*mm;
+  
+  mInnerMagnetRadius = 425*mm;
+  mOuterMagnetRadius = (425*mm+0.2*cu->GetRadlen()); // magnet wall is 20% X0 in copper thick
+  
+  
+  //--------- Sizes of the principal geometrical components (solids)  ---------
+  ComputeParameters(); 
+  
+  //--------- Extra: Mengqing  ---------
+  fCheckOverlaps=true;
 }
  
 DetectorConstruction::~DetectorConstruction()
@@ -217,7 +218,7 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes(){
 	pSensorLogic  -> SetVisAttributes(SensorVisAtt); 
 	
 	std::cout<<"test"<<std::endl;
-	PrintParameters();
+	//PrintParameters();
 	
 	//always return the physical World
 	return pPhysiWorld;
