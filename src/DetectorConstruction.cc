@@ -6,7 +6,7 @@
  * Origin @Dimitra
  * Modify @Mengqing, 2019-01-28
  * Dev    @Mengqing, 2019-04-11
- * Note by Mengqing: 
+ * Note by Mengqing:
  * -- Magnetic field is hard coded in it, but one can set it to 0 tesla.
  */
 
@@ -42,6 +42,9 @@
 
 DetectorConstruction::DetectorConstruction()
 {
+    //--------- Material definition ---------
+    DefineMaterials(); // mengqing
+
 	mNumOfLayers = 6;
 	mSiSensorYZ = 92*mm;
 	mSiSensorThickness = 0.320*mm;
@@ -53,16 +56,13 @@ DetectorConstruction::DetectorConstruction()
 	mInnerMagnetRadius = 425*mm;
 	mOuterMagnetRadius = (425*mm+0.2*cu->GetRadlen()); // magnet wall is 20% X0 in copper thick
 
-	//--------- Material definition ---------
-	DefineMaterials(); // mengqing
-
 	//--------- Sizes of the principal geometrical components (solids)  ---------
-	ComputeParameters(); 
+	ComputeParameters();
 
 	//--------- Extra: Mengqing  ---------
 	fCheckOverlaps=true;
 }
- 
+
 DetectorConstruction::~DetectorConstruction()
 {
 }
@@ -71,7 +71,7 @@ DetectorConstruction::~DetectorConstruction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void DetectorConstruction::DefineMaterials() 
+void DetectorConstruction::DefineMaterials()
 {
 	//Get Materials from NIST database
 	G4NistManager* man = G4NistManager::Instance();
@@ -88,7 +88,7 @@ void DetectorConstruction::DefineMaterials()
 	si = man->FindOrBuildMaterial("G4_Si");
 }
 
-void DetectorConstruction::ComputeParameters(){ 
+void DetectorConstruction::ComputeParameters(){
 	/*
 	 * This function defines the defaults of the geometry parameters
 	 * TODO@too dirty, to modify!
@@ -98,29 +98,29 @@ void DetectorConstruction::ComputeParameters(){
 	halfLPLength = 305*mm;
 
 	//minimumForTest=0.025*mm;
-	
+
 }
 
 G4VPhysicalVolume* DetectorConstruction::Construct(){
 	/*
-	 * Main function to construct the geometry	
+	 * Main function to construct the geometry
 	 * This function is called by G4 when the detector has to be created
 	 * Definitions of Solids, Logical Volumes, Physical Volumes
 	 */
-	
+
 	/*--------- Material definition ---------*/
     DefineMaterials();
     /*--------- Volumes definition ---------*/
     return DefineVolumes();
-	
+
 }
 
 
- 
+
 G4VPhysicalVolume* DetectorConstruction::DefineVolumes(){
 	/*
 	 * Define all the boxes:
-	 * Version 1: 
+	 * Version 1:
 	 *   World Box <- upstream Box + downstream Box
 	 * Version 2:
 	 *   World Box <- Magnet World <- upstream Box + downstream Box
@@ -139,7 +139,7 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes(){
 	 * 10: fourth si-Sensor
 	 * 11+: field strips of the field cage
 	 */
-	
+
 	/*--------- World Box ---------*/
 	G4Box * solidWorld= new G4Box("world", halfWorldLength, halfWorldLength, halfWorldLength);
 	// World Logical Volume (Associate with the world box)
@@ -149,7 +149,7 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes(){
 	                                G4ThreeVector(),  // at (0,0,0)
 	                                pLogicWorld,      // its logical volume
 	                                "World",          // its name
-	                                0,                // its mother volume 
+	                                0,                // its mother volume
 	                                false,			  // pMany, not used, Set it to false...
 	                                0, 				  // copy number, unique arbitrary index
 	                                fCheckOverlaps);  // optional overlap check
@@ -173,19 +173,19 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes(){
 	                                      halfLPLength,      // half height (z axis)
 	                                      0,                 // Starting angle in phi
 	                                      CLHEP::twopi);     // Ending angle in phi, pi defined in
-	
+
 	pAirInMagnetLogic = new G4LogicalVolume( airInMagnetSolid, air, "AirInMagnetLogic");
-	
+
 	pAirInMagnetPhysi = new G4PVPlacement(0, G4ThreeVector(), pAirInMagnetLogic,"AirInMagnetPart",
 	                                      pLogicWorld,  false, 2, fCheckOverlaps);
-	
+
 	/*--------- Upstream Cassette : daughter of AirInMagnetLogic ---------*/
-	
+
 	auto CassetteSolid = new G4Box("Cassette Solid", mCassetteX/2, mCassetteY/2, mCassetteZ/2); //half-length
 	pCassetteLogic = new G4LogicalVolume( CassetteSolid, air, "Cassette Logic");
 	pCassettePhysi = new G4PVPlacement( 0, G4ThreeVector(), pCassetteLogic, "Cassette Physical",
 	                                    pAirInMagnetLogic,  false, 3, fCheckOverlaps);
-	
+
 
 	// Create sensor layers
 	auto SensorSolid = new G4Box("Sensor solid", mSiSensorThickness/2, mSiSensorYZ/2, mSiSensorYZ/2 );
@@ -214,11 +214,11 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes(){
 
 	pMagnetLogic  -> SetVisAttributes(MagnetVisAtt);
 	pCassetteLogic-> SetVisAttributes(CassetteVisAtt);
-	pSensorLogic  -> SetVisAttributes(SensorVisAtt); 
-	
+	pSensorLogic  -> SetVisAttributes(SensorVisAtt);
+
 	std::cout<<"test"<<std::endl;
-	PrintParameters();
-	
+	// PrintParameters();
+
 	//always return the physical World
 	return pPhysiWorld;
 
@@ -226,21 +226,21 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes(){
 
 
 void DetectorConstruction::ConstructField() {
-	/* 
+	/*
 	 * 1 Tesla B field.
-	 * using an uniform LOCAL B field to represent the inner-solenoid. 
+	 * using an uniform LOCAL B field to represent the inner-solenoid.
 	 */
-	static G4TransportationManager* trMgr= 
+	static G4TransportationManager* trMgr=
 		G4TransportationManager::GetTransportationManager();
-	
+
 	// A field object is held by a field manager
 	// Find the global Field Manager
 	G4FieldManager* pZeroFieldMgr= trMgr->GetFieldManager();
 	G4MagneticField* pNullField= (G4MagneticField*) 0;
-	pZeroFieldMgr->SetDetectorField(pNullField); 
-	
-	
-	G4FieldManager*  magnetFieldMgr= new G4FieldManager(); 
+	pZeroFieldMgr->SetDetectorField(pNullField);
+
+
+	G4FieldManager*  magnetFieldMgr= new G4FieldManager();
 	G4MagneticField* myField;
 	G4ThreeVector  fieldVector( 0 , 0 , 1*tesla );
 	//  G4ThreeVector  fieldVector( 0 , 0 , 0 );
@@ -253,9 +253,9 @@ void DetectorConstruction::ConstructField() {
 	magnetFieldMgr->CreateChordFinder(myField);
 
 	pAirInMagnetLogic->SetFieldManager( magnetFieldMgr, true );
-	
+
 }
- 
+
 
 
 // G4VPhysicalVolume* DetectorConstruction::ConstructGeometry()

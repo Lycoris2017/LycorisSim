@@ -262,7 +262,7 @@ void Analysis::EndOfRun(const G4Run* aRun)
 
 	G4int numEvents = aRun->GetNumberOfEvent();
 
-	
+
 	G4cout<<"================="<<G4endl;
 	G4cout<<"Summary for run: "<<aRun->GetRunID()<<G4endl;
 	G4cout<<"\t Event processed: "<<numEvents<<G4endl;
@@ -275,8 +275,9 @@ void Analysis::EndOfRun(const G4Run* aRun)
 	//At the end of the run we can now save a ROOT file containing the histogram
 	// From the aRun variable we get the run number and use it to create a unique name for the output file
 	char filename[256];
-	//sprintf(filename,"run_%d.root",aRun->GetRunID() );
-	sprintf(filename,"/nfs/dust/ilc/user/mengqing/data/G4_output/run_%d.root",aRun->GetRunID() );
+	sprintf(filename,"run_%d.root",aRun->GetRunID() );
+	// sprintf(filename,"/nfs/dust/ilc/user/mengqing/data/G4_output/run_%d.root",aRun->GetRunID() );
+
 	TFile* outfile = TFile::Open(filename,"recreate");
 	tree->Write();
 	outfile->Close();
