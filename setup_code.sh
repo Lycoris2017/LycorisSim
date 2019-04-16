@@ -8,7 +8,6 @@ echo "Your OS sys is $typeos"
 # dimitra's init files:
 #source init/setupILCsoft.sh
 #source init/geant4init.sh
-
 # mengqing's cvmfs minimum ilcsoft-v02-00-01 init file:
 #source init/G4init.sh
 
@@ -26,3 +25,4 @@ else
 	echo "Input OS is Not valid!"
 fi
 
+#source /cvmfs/ilc.desy.de/sw/x86_64_gcc49_sl6/v02-00-01/init_ilcsoft.sh
