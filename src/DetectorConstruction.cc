@@ -42,8 +42,8 @@
 
 DetectorConstruction::DetectorConstruction()
 {
-    //--------- Material definition ---------
-    DefineMaterials(); // mengqing
+  //--------- Material definition ---------
+  DefineMaterials(); // mengqing
 
 	mNumOfLayers = 6;
 	mSiSensorYZ = 92*mm;
@@ -218,7 +218,6 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes(){
 
 	std::cout<<"test"<<std::endl;
 	// PrintParameters();
-
 	//always return the physical World
 	return pPhysiWorld;
 
