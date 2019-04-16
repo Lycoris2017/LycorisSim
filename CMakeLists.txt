@@ -19,7 +19,7 @@ include_directories(${ROOT_INCLUDE_DIRS})
 # Find G4
 #
 
-find_package(Geant4 REQUIRED)
+find_package(Geant4 REQUIRED ui_all vis_all)
 message(STATUS "Geant4_CXXSTD=${Geant4_CXXSTD}")
 
 
